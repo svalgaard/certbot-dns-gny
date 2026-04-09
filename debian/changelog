@@ -1,3 +1,10 @@
+certbot-dns-gny (0.2-1) unstable; urgency=medium
+
+  * Add gnyclient cli.
+  * Almost ready for production.
+
+ -- Jens Svalgaard Kohrt <github@svalgaard.net>  Wed, 09 Apr 2025 22:10:00 +0200
+
 certbot-dns-gny (0.1.0-1) unstable; urgency=medium
 
   * Initial release.
