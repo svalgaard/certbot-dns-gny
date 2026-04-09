@@ -4,7 +4,7 @@ from collections.abc import Callable
 
 from certbot.plugins import dns_common
 
-from .gnyclient import GNYClient
+from .gnyclient import GNYClient, DEFAULT_CREDENTIALS
 
 
 class Authenticator(dns_common.DNSAuthenticator):
@@ -25,7 +25,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         add(
             "credentials",
             help="GNY credentials INI file.",
-            default="/etc/letsencrypt/gny.ini",
+            default=DEFAULT_CREDENTIALS,
         )
 
     def more_info(self):

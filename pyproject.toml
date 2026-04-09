@@ -14,6 +14,9 @@ dependencies = [
     "requests>=2.20",
 ]
 
+[project.scripts]
+gnyclient = "certbot_dns_gny.gnyclient:main"
+
 [project.entry-points."certbot.plugins"]
 dns-gny = "certbot_dns_gny.dns_gny:Authenticator"
 
