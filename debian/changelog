@@ -1,0 +1,5 @@
+certbot-dns-gny (0.1.0-1) unstable; urgency=medium
+
+  * Initial release.
+
+ -- Jens Svalgaard Kohrt <github@svalgaard.net>  Wed, 09 Apr 2025 22:00:00 +0200

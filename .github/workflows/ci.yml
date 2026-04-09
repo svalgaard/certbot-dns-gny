@@ -36,3 +36,27 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+  deb:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            debhelper \
+            dh-python \
+            pybuild-plugin-pyproject \
+            python3-all \
+            python3-setuptools \
+            python3-certbot \
+            python3-requests
+      - name: Build deb package
+        run: dpkg-buildpackage -us -uc -b
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-package
+          path: ../*.deb

@@ -1,0 +1,21 @@
+Source: certbot-dns-gny
+Section: python
+Priority: optional
+Maintainer: Jens Svalgaard Kohrt <github@svalgaard.net>
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-sequence-python3,
+ python3-all,
+ python3-setuptools,
+ python3-certbot,
+ python3-requests,
+ pybuild-plugin-pyproject,
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: python3-certbot-dns-gny
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: GNY DNS Authenticator plugin for Certbot
+ This plugin automates the process of completing a dns-01 challenge
+ by creating and cleaning up TXT records using the GNY API.
