@@ -1,10 +1,10 @@
 """DNS Authenticator for GNY."""
 
 from collections.abc import Callable
-from typing import Any
+
+from certbot.plugins import dns_common
 
 from .gnyclient import GNYClient
-from certbot.plugins import dns_common
 
 
 class Authenticator(dns_common.DNSAuthenticator):
