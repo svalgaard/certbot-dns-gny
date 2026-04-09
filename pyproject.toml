@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "certbot-dns-gny"
+version = "0.1.0"
+description = "Certbot DNS Authenticator plugin for GNY"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.8"
+dependencies = [
+    "certbot>=2.0",
+    "requests>=2.20",
+]
+
+[project.entry-points."certbot.plugins"]
+dns-gny = "certbot_dns_gny.dns_gny:Authenticator"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
