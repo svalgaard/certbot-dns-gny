@@ -5,6 +5,7 @@
 import argparse
 import configparser
 import os
+
 import requests
 
 DEFAULT_CREDENTIALS = "/etc/letsencrypt/gny.ini"

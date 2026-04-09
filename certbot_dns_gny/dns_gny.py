@@ -4,7 +4,7 @@ from collections.abc import Callable
 
 from certbot.plugins import dns_common
 
-from .gnyclient import GNYClient, DEFAULT_CREDENTIALS
+from .gnyclient import DEFAULT_CREDENTIALS, GNYClient
 
 
 class Authenticator(dns_common.DNSAuthenticator):
