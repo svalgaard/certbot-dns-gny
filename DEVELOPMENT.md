@@ -34,7 +34,10 @@ dpkg-buildpackage -us -uc -b
 1. Bump version in `pyproject.toml` and `certbot_dns_gny/__init__.py`
 2. Update `debian/changelog`
 3. Commit and push to `main`
-4. Create a GitHub Release with a `v*` tag:
+4. Tag and push:
    ```bash
-   gh release create v0.x.0 --title "v0.x.0" --notes "Release notes here"
+   git tag v0.x.0
+   git push origin v0.x.0
    ```
+   The `release.yml` workflow will automatically create a GitHub Release
+   with notes extracted from `debian/changelog` and attach the `.deb`.
