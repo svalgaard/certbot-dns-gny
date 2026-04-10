@@ -1,4 +1,10 @@
-certbot-dns-gny (0.2-1) unstable; urgency=medium
+certbot-dns-gny (0.2.1-1) unstable; urgency=medium
+
+  * Fix deb build system.
+
+ -- Jens Svalgaard Kohrt <github@svalgaard.net>  Wed, 10 Apr 2025 08:35:00 +0200
+
+certbot-dns-gny (0.2.0-1) unstable; urgency=medium
 
   * Add gnyclient cli.
   * Almost ready for production.
