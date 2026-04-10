@@ -55,9 +55,11 @@ jobs:
             python3-certbot \
             python3-requests
       - name: Build deb package
-        run: dpkg-buildpackage -us -uc -b
+        run: |
+          dpkg-buildpackage -us -uc -b
+          cp ../*.deb .
       - name: Upload deb
         uses: actions/upload-artifact@v5
         with:
           name: deb-package
-          path: ../*.deb
+          path: "*.deb"
