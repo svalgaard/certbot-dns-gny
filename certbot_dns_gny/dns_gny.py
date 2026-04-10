@@ -40,8 +40,7 @@ class Authenticator(dns_common.DNSAuthenticator):
             "GNY credentials INI file",
             {
                 "hostname": "Hostname for GNY server",
-                "username": "Username for GNY API.",
-                "password": "Password for GNY API.",
+                "token": "Bearer token for GNY API.",
             },
         )
 
@@ -50,8 +49,7 @@ class Authenticator(dns_common.DNSAuthenticator):
             self._setup_credentials()
             self._gnyclient = GNYClient(
                 self.credentials.conf("hostname"),
-                self.credentials.conf("username"),
-                self.credentials.conf("password"),
+                self.credentials.conf("token"),
             )
 
     def _perform(self, domain: str, validation_name: str, validation: str) -> None:

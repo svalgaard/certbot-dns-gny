@@ -41,15 +41,14 @@ class TestAuthenticator(unittest.TestCase):
         mock_creds = MagicMock()
         mock_creds.conf.side_effect = lambda k: {
             "hostname": "dns.example.com",
-            "username": "user",
-            "password": "pass",
+            "token": "mytoken",
         }[k]
         auth.credentials = mock_creds
         auth._setup_credentials = MagicMock()
 
         auth._setup_gnyclient()
 
-        mock_client_cls.assert_called_once_with("dns.example.com", "user", "pass")
+        mock_client_cls.assert_called_once_with("dns.example.com", "mytoken")
         assert auth._gnyclient == mock_client_cls.return_value
 
     @patch("certbot_dns_gny.dns_gny.GNYClient")

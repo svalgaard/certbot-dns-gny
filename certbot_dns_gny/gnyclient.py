@@ -9,21 +9,34 @@ import os
 import requests
 
 DEFAULT_CREDENTIALS = "/etc/letsencrypt/gny.ini"
+DEFAULT_TIMEOUT = 30
 PREFIX = "dns_gny_"
 
 
 class GNYClient:
     """Thin wrapper around a requests.Session configured for the GNY API."""
 
-    def __init__(self, hostname: str, username: str = None, password: str = None):
+    def __init__(self, hostname: str, token: str | None = None):
         self.host = hostname
         self.base_url = f"https://{self.host}/api/"
         self.session = requests.Session()
-        if username and password:
-            self.session.auth = (username, password)
+        if token:
+            self.session.headers["Authorization"] = f"Bearer {token}"
 
-    def _request(self, method: str, url: str, payload: dict = {}) -> dict:
-        response = self.session.request(method, f"{self.base_url}{url}", json=payload)
+    def _request(
+        self,
+        method: str,
+        url: str,
+        payload: dict | None = None,
+        params: dict | None = None,
+    ) -> dict:
+        response = self.session.request(
+            method,
+            f"{self.base_url}{url}",
+            json=payload,
+            params=params,
+            timeout=DEFAULT_TIMEOUT,
+        )
         response.raise_for_status()
         return response.json()
 
@@ -33,15 +46,14 @@ class GNYClient:
 
     def add(self, validation_name: str, validation: str):
         payload = {"name": validation_name, "text": validation}
-        return self._request("POST", "record:txt", payload)
+        return self._request("POST", "txt", payload)
 
     def delete(self, validation_name: str, validation: str):
         payload = {"name": validation_name, "text": validation}
-        return self._request("DELETE", "record:txt", payload)
+        return self._request("DELETE", "txt", payload)
 
     def test(self, validation_name: str):
-        payload = {"name": validation_name}
-        return self._request("GET", "record:txt/test", payload)
+        return self._request("GET", "txt/test", params={"name": validation_name})
 
 
 def _load_credentials(path: str) -> GNYClient:
@@ -51,8 +63,7 @@ def _load_credentials(path: str) -> GNYClient:
     section = cfg.defaults()
     return GNYClient(
         section[f"{PREFIX}hostname"],
-        section[f"{PREFIX}username"],
-        section[f"{PREFIX}password"],
+        section[f"{PREFIX}token"],
     )
 
 

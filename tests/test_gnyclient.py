@@ -16,24 +16,24 @@ from certbot_dns_gny.gnyclient import (
 
 class TestGNYClient(unittest.TestCase):
     def setUp(self):
-        self.client = GNYClient("dns.example.com", "user", "pass")
+        self.client = GNYClient("dns.example.com", "mytoken")
 
     def test_base_url(self):
         assert self.client.base_url == "https://dns.example.com/api/"
 
     def test_auth_is_set(self):
-        assert self.client.session.auth == ("user", "pass")
+        assert self.client.session.headers["Authorization"] == "Bearer mytoken"
 
     def test_no_auth_when_omitted(self):
         client = GNYClient("dns.example.com")
-        assert client.session.auth is None
+        assert "Authorization" not in client.session.headers
 
     @patch.object(GNYClient, "_request")
     def test_add(self, mock_request):
         self.client.add("_acme.example.com", "token123")
         mock_request.assert_called_once_with(
             "POST",
-            "record:txt",
+            "txt",
             {"name": "_acme.example.com", "text": "token123"},
         )
 
@@ -42,7 +42,7 @@ class TestGNYClient(unittest.TestCase):
         self.client.delete("_acme.example.com", "token123")
         mock_request.assert_called_once_with(
             "DELETE",
-            "record:txt",
+            "txt",
             {"name": "_acme.example.com", "text": "token123"},
         )
 
@@ -60,8 +60,8 @@ class TestGNYClient(unittest.TestCase):
         self.client.test("_acme.example.com")
         mock_request.assert_called_once_with(
             "GET",
-            "record:txt/test",
-            {"name": "_acme.example.com"},
+            "txt/test",
+            params={"name": "_acme.example.com"},
         )
 
     @patch("certbot_dns_gny.gnyclient.requests.Session")
@@ -72,13 +72,15 @@ class TestGNYClient(unittest.TestCase):
         mock_session.request.return_value = mock_response
         mock_session_cls.return_value = mock_session
 
-        client = GNYClient("dns.example.com", "user", "pass")
-        result = client._request("POST", "record:txt", {"name": "test"})
+        client = GNYClient("dns.example.com", "mytoken")
+        result = client._request("POST", "txt", {"name": "test"})
 
         mock_session.request.assert_called_once_with(
             "POST",
-            "https://dns.example.com/api/record:txt",
+            "https://dns.example.com/api/txt",
             json={"name": "test"},
+            params=None,
+            timeout=30,
         )
         mock_response.raise_for_status.assert_called_once()
         assert result == {"result": "ok"}
@@ -91,14 +93,13 @@ class TestLoadCredentials(unittest.TestCase):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".ini", delete=False) as f:
             f.write("[DEFAULT]\n")
             f.write("dns_gny_hostname = dns.example.com\n")
-            f.write("dns_gny_username = myuser\n")
-            f.write("dns_gny_password = mypass\n")
+            f.write("dns_gny_token = mytoken\n")
             path = f.name
 
         try:
             client = _load_credentials(path)
             assert client.host == "dns.example.com"
-            assert client.session.auth == ("myuser", "mypass")
+            assert client.session.headers["Authorization"] == "Bearer mytoken"
         finally:
             os.unlink(path)
 
@@ -111,7 +112,7 @@ class TestCmdEnroll(unittest.TestCase):
     def test_enroll_writes_credentials(
         self, mock_enroll, mock_file, mock_makedirs, mock_chmod
     ):
-        mock_enroll.return_value = {"username": "u1", "password": "p1"}
+        mock_enroll.return_value = {"token": "tok123"}
         args = argparse.Namespace(
             hostname="dns.example.com",
             mail="user@example.com",
@@ -132,7 +133,7 @@ class TestCmdEnroll(unittest.TestCase):
     def test_enroll_saves_hostname_in_config(
         self, mock_enroll, mock_file, mock_makedirs, mock_chmod
     ):
-        mock_enroll.return_value = {"username": "u1", "password": "p1"}
+        mock_enroll.return_value = {"token": "tok456"}
         args = argparse.Namespace(
             hostname="gny.example.com",
             mail="a@b.com",
@@ -143,8 +144,7 @@ class TestCmdEnroll(unittest.TestCase):
 
         written = "".join(call.args[0] for call in mock_file().write.call_args_list)
         assert "dns_gny_hostname = gny.example.com" in written
-        assert "dns_gny_username = u1" in written
-        assert "dns_gny_password = p1" in written
+        assert "dns_gny_token = tok456" in written
 
 
 class TestCmdTest(unittest.TestCase):
