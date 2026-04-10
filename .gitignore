@@ -205,3 +205,13 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Building and packaging
+.pybuild/
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/python3-certbot-dns-gny/
+debian/python3-certbot-dns-gny.prerm.debhelper
+debian/python3-certbot-dns-gny.postinst.debhelper
+debian/python3-certbot-dns-gny.substvars
